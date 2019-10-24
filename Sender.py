@@ -33,12 +33,15 @@ class Sender(BasicSender.BasicSender):
       sNumber = 0
       #initiate connection (while loop)
       synPacket = self.make_packet("syn",sNumber,"")
-      recvBuffer = 0 
-      while(recvBuffer==0):
+      recvBuffer = None 
+      while(not recvBuffer):
+        self.send(synPacket)
         recvBuffer = self.receive()
-      message = self.split_packet(recvBuffer)
+      msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
+      print(msg_type + " " + seqno + " " + data + " " + checksum)
       #start sending packets
-        
+      status = 1
+      while(status==1):
 '''
 This will be run if you run this script from the command line. You should not
 change any of this; the grader may rely on the behavior here to test your
