@@ -15,33 +15,56 @@ class Sender(BasicSender.BasicSender):
 
     def makePackets(self):
         lst = []
+        packetList = []
         fSplit = self.infile.read(1472)
         while fSplit:
             lst.append(fSplit)
             fSplit = self.infile.read(1472)
-        for i in range(len(lst)-1):
-            self.make_packet("dat",i+1,lst[i])
-        self.make_packet("fin",len(lst)-1,lst[len(lst)-1])
 
+        packetList.append(self.make_packet("syn",0,""))
+        for i in range(len(lst)-1):
+            packetList.append(self.make_packet("dat",i+1,lst[i]))
+
+        packetList.append(self.make_packet("fin",len(lst),lst[len(lst)-1]))
+        return packetList
 
     # Main sending loop.
     def start(self):
       # add things here
       #split up packets
       packetSplit = self.makePackets()
-      #starting sequence number 
-      sNumber = 0
+      print(packetSplit)
+      print(len(packetSplit))
       #initiate connection (while loop)
-      synPacket = self.make_packet("syn",sNumber,"")
       recvBuffer = None 
       while(not recvBuffer):
-        self.send(synPacket)
+        self.send(packetSplit[0])
         recvBuffer = self.receive()
       msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
       print(msg_type + " " + seqno + " " + data + " " + checksum)
       #start sending packets
       status = 1
+      base = 1
+      nextSeqNum = 1
+      N = 7
+      recvBuffer = None
       while(status==1):
+        if(nextSeqNum < int(base)+N):
+            self.send(packetSplit[nextSeqNum])
+            nextSeqNum= nextSeqNum+1
+            recvBuffer = self.receive()
+            if(recvBuffer == None):
+                pass
+            else:
+                msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
+                print(msg_type + " " + seqno + " " + data + " " + checksum)
+                if (seqno==len(packetSplit)-1):
+                    base = seqno
+
+
+
+     
+ 
 '''
 This will be run if you run this script from the command line. You should not
 change any of this; the grader may rely on the behavior here to test your
