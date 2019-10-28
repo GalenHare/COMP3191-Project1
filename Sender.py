@@ -1,6 +1,6 @@
 import sys
 import getopt
-
+import datetime
 import Checksum
 import BasicSender
 
@@ -28,38 +28,57 @@ class Sender(BasicSender.BasicSender):
         packetList.append(self.make_packet("fin",len(lst),lst[len(lst)-1]))
         return packetList
 
+
     # Main sending loop.
     def start(self):
-      # add things here
       #split up packets
       packetSplit = self.makePackets()
-      print(packetSplit)
-      print(len(packetSplit))
-      #initiate connection (while loop)
       recvBuffer = None 
       while(not recvBuffer):
-        self.send(packetSplit[0])
-        recvBuffer = self.receive()
+        try:
+          self.send(packetSplit[0])
+          recvBuffer = self.receive()
+        except (KeyboardInterrupt, SystemExit):
+          exit()
+
       msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
       print(msg_type + " " + seqno + " " + data + " " + checksum)
       #start sending packets
-      status = 1
       base = 1
       nextSeqNum = 1
       N = 7
-      recvBuffer = None
-      while(status==1):
-        if(nextSeqNum < int(base)+N):
-            self.send(packetSplit[nextSeqNum])
-            nextSeqNum= nextSeqNum+1
-            recvBuffer = self.receive()
-            if(recvBuffer == None):
-                pass
-            else:
+      while(True):
+        try:
+          if(seqno==0):
+            if(recvBuffer and Checksum.validate_checksum(recvBuffer)):
                 msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
                 print(msg_type + " " + seqno + " " + data + " " + checksum)
-                if (seqno==len(packetSplit)-1):
-                    base = seqno
+                base = seqno
+          if(nextSeqNum < int(base)+N):
+            self.send(packetSplit[nextSeqNum])
+            if(base==nextSeqNum):
+              a = datetime.datetime.now()
+            nextSeqNum= nextSeqNum+1
+            if((datetime.datetime.now() - a).microseconds >= 500000 or (datetime.datetime.now() - a).seconds >= 1 ):
+              n=0
+              while((n+base)<nextSeqNum):
+                self.send(packetSplit[base+n])
+                n = n+1
+            recvBuffer = self.receive()
+            if(recvBuffer and Checksum.validate_checksum(recvBuffer)):
+              msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
+              print(msg_type + " " + seqno + " " + data + " " + checksum)
+              base = seqno
+              if(base == nextSeqNum):
+                pass
+              else:
+                a = datetime.datetime.now()
+              #check if ack received is the one we expect 
+        except (KeyboardInterrupt, SystemExit):
+          exit()
+
+            
+                
 
 
 
