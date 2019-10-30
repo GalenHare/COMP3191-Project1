@@ -2,7 +2,7 @@ import socket
 import getopt
 import sys
 import time
-
+import random
 import Checksum
 
 class Connection():

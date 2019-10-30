@@ -1,0 +1,68 @@
+Sender.py: sent syn|0||2507698612
+Sender.py: sent syn|0||2507698612
+Sender.py: sent syn|0||2507698612
+Sender.py: sent syn|0||2507698612
+Sender.py: sent syn|0||2507698612
+Sender.py: sent syn|0||2507698612
+Sender.py: sent syn|0||2507698612
+Sender.py: sent syn|0||2507698612
+Sender.py: received ack|1||2195368786
+Sender.py: sent dat|1|CS 16|107467815
+Sender.py: sent dat|2|   __|3415177447
+Sender.py: sent dat|3|nder.|1350436593
+Sender.py: sent dat|4|e tes|3105984232
+Sender.py: sent fin|5|ons
+=|2742973227
+Sender.py: received ack|3||2968308176
+Sender.py: received ack|4||4289552151
+Sender.py: received ack|5||3870715478
+TIMEOUT
+Sender.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending fin|5|ons
+=|2742973227
+Sender.py: received ack|6||3449503125
+FINISHED A RUN
+0436593
+Sender.py: resending dat|4|e tes|3105984232
+Sender.py: resending fin|5|ons
+=|2742973227
+Sender.py: received ack|3||2968308176
+Sender.py: received ack|6||3449503125
+FINISHED A RUN
+nder.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending dat|1|CS 16|107467815
+Sender.py: resending dat|2|   __|3415177447
+Sender.py: resending dat|3|nder.|1350436593
+Sender.py: resending dat|4|e tes|3105984232
+Sender.py: resending fin|5|ons
+=|2742973227
+Sender.py: received ack|4||4289552151
+TIMEOUT
+Sender.py: resending dat|4|e tes|3105984232
+Sender.py: resending fin|5|ons
+=|2742973227
+TIMEOUT
+Sender.py: resending dat|4|e tes|3105984232
+Sender.py: resending fin|5|ons
+=|2742973227
+Sender.py: received ack|6||3449503125
+FINISHED A RUN

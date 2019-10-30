@@ -13,13 +13,18 @@ class Sender(BasicSender.BasicSender):
         self.sackMode = sackMode
         self.debug = debug
 
+    def log(self,label,msg):
+      if debug:
+        msg_type, seqno, data, checksum = self.split_packet(msg)
+        print("Sender.py: %s %s|%d|%s|%s" % (label, msg_type, int(seqno),data[:5],checksum))
+
     def makePackets(self):
         lst = []
         packetList = []
-        fSplit = self.infile.read(1472)
+        fSplit = self.infile.read(1200)
         while fSplit:
             lst.append(fSplit)
-            fSplit = self.infile.read(1472)
+            fSplit = self.infile.read(1200)
 
         packetList.append(self.make_packet("syn",0,""))
         for i in range(len(lst)-1):
@@ -34,46 +39,52 @@ class Sender(BasicSender.BasicSender):
       #split up packets
       packetSplit = self.makePackets()
       recvBuffer = None 
-      while(not recvBuffer):
+      while(recvBuffer==None):
         try:
           self.send(packetSplit[0])
-          recvBuffer = self.receive()
+          self.log("sent",packetSplit[0])
+          recvBuffer = self.receive(0.5)
         except (KeyboardInterrupt, SystemExit):
           exit()
-
-      msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
-      print(msg_type + " " + seqno + " " + data + " " + checksum)
+      self.log("received",recvBuffer)
       #start sending packets
       base = 1
       nextSeqNum = 1
       N = 7
       while(True):
         try:
-          if(seqno==0):
-            if(recvBuffer and Checksum.validate_checksum(recvBuffer)):
-                msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
-                print(msg_type + " " + seqno + " " + data + " " + checksum)
-                base = seqno
-          if(nextSeqNum < int(base)+N):
-            self.send(packetSplit[nextSeqNum])
-            if(base==nextSeqNum):
-              a = datetime.datetime.now()
-            nextSeqNum= nextSeqNum+1
-            if((datetime.datetime.now() - a).microseconds >= 500000 or (datetime.datetime.now() - a).seconds >= 1 ):
-              n=0
-              while((n+base)<nextSeqNum):
-                self.send(packetSplit[base+n])
-                n = n+1
-            recvBuffer = self.receive()
-            if(recvBuffer and Checksum.validate_checksum(recvBuffer)):
-              msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
-              print(msg_type + " " + seqno + " " + data + " " + checksum)
-              base = seqno
-              if(base == nextSeqNum):
-                pass
-              else:
+          while (nextSeqNum < int(base)+N):
+            try:
+              if(nextSeqNum==len(packetSplit)):
+                break
+              self.send(packetSplit[nextSeqNum])
+              self.log("sent",packetSplit[nextSeqNum])
+              if(base==nextSeqNum):
                 a = datetime.datetime.now()
-              #check if ack received is the one we expect 
+              nextSeqNum = nextSeqNum + 1
+            except(KeyboardInterrupt, SystemExit):
+              exit()
+          if((datetime.datetime.now() - a).microseconds >= 500000 or (datetime.datetime.now() - a).seconds >= 1 ):
+            print("TIMEOUT")
+            n=0
+            while((n+int(base))<nextSeqNum):
+              self.send(packetSplit[int(base)+n-1])
+              self.log("resending",packetSplit[int(base)+n])
+              n = n+1
+              a = datetime.datetime.now()
+          recvBuffer = self.receive(0.5)
+          if(recvBuffer and Checksum.validate_checksum(recvBuffer)):
+            msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
+            self.log("received", recvBuffer)
+            if(int(seqno)==len(packetSplit)):
+              print("FINISHED A RUN")
+              exit()
+            base = seqno
+            if(int(base) == nextSeqNum):
+              pass
+            else:
+              a = datetime.datetime.now()
+            #check if ack received is the one we expect 
         except (KeyboardInterrupt, SystemExit):
           exit()
 
