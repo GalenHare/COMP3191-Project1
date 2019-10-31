@@ -1,6 +1,7 @@
 import sys
 import getopt
-import datetime
+import time
+
 import Checksum
 import BasicSender
 
@@ -12,89 +13,102 @@ class Sender(BasicSender.BasicSender):
         super(Sender, self).__init__(dest, port, filename, debug)
         self.sackMode = sackMode
         self.debug = debug
+        self.window = 7
+        self.timeout = 0.5
+        self.packetSize = 1471
+        self.base = 1
+        self.nextSeqNo = 1
+        self.packetList = None
+        self.timer = True
 
     def log(self,label,msg):
       if debug:
-        msg_type, seqno, data, checksum = self.split_packet(msg)
-        print("Sender.py: %s %s|%d|%s|%s" % (label, msg_type, int(seqno),data[:5],checksum))
+        msg_type, seqNo, data, checksum = self.split_packet(msg)
+        if self.sackMode:
+          pass
+        else:
+          print("Sender.py: %s %s|%d|%s|%s" % (label, msg_type, int(seqNo), data[:5], checksum))
 
     def makePackets(self):
-        lst = []
-        packetList = []
-        fSplit = self.infile.read(1200)
-        while fSplit:
-            lst.append(fSplit)
-            fSplit = self.infile.read(1200)
+      lst = []
+      packetList = []
+      fSplit = self.infile.read(self.packetSize)
+      while fSplit:
+        lst.append(fSplit)
+        fSplit = self.infile.read(self.packetSize)
 
-        packetList.append(self.make_packet("syn",0,""))
-        for i in range(len(lst)-1):
-            packetList.append(self.make_packet("dat",i+1,lst[i]))
+      packetList.append(self.make_packet("syn",0,""))
+      for i in range(len(lst)-1):
+        packetList.append(self.make_packet("dat",i+1,lst[i]))
 
-        packetList.append(self.make_packet("fin",len(lst),lst[len(lst)-1]))
-        return packetList
+      packetList.append(self.make_packet("fin",len(lst),lst[len(lst)-1]))
+      return packetList
+
+    def handleAck(self,msg):
+      if self.sackMode:
+        #gets received packets out of sack thing
+        pass
+      else:
+        return int(self.split_packet(msg)[1])
+
+    def startConnection(self):
+      recvBuffer = None
+      while(recvBuffer==None):
+        self.send(self.packetList[0])
+        self.log("sent",self.packetList[0])
+        recvBuffer = self.receive(0.5)
+      self.log("received",recvBuffer)
+      if(self.debug):
+        print("Connection established")
+    
+    
+
 
 
     # Main sending loop.
     def start(self):
-      #split up packets
-      packetSplit = self.makePackets()
-      recvBuffer = None 
-      while(recvBuffer==None):
+      # add things here
+      self.packetList = self.makePackets()
+      self.startConnection()
+      while True:
         try:
-          self.send(packetSplit[0])
-          self.log("sent",packetSplit[0])
+          while(self.nextSeqNo < self.base+self.window):
+            if(self.nextSeqNo >= len(self.packetList)):
+              break
+            self.send(self.packetList[self.nextSeqNo])
+            self.log("sent",self.packetList[self.nextSeqNo])
+            if(self.base==self.nextSeqNo):
+              self.log("Timer started at:",self.packetList[self.nextSeqNo])
+              self.timer = True
+              a=time.time()
+            self.nextSeqNo = self.nextSeqNo + 1
+          if(time.time()-a > 0.5 and self.timer==True):
+            a= time.time()
+            for i in range(self.base,self.nextSeqNo):
+              self.send(self.packetList[i])
+              self.log("resending",self.packetList[i])
           recvBuffer = self.receive(0.5)
-        except (KeyboardInterrupt, SystemExit):
-          exit()
-      self.log("received",recvBuffer)
-      #start sending packets
-      base = 1
-      nextSeqNum = 1
-      N = 7
-      while(True):
-        try:
-          while (nextSeqNum < int(base)+N):
-            try:
-              if(nextSeqNum==len(packetSplit)):
-                break
-              self.send(packetSplit[nextSeqNum])
-              self.log("sent",packetSplit[nextSeqNum])
-              if(base==nextSeqNum):
-                a = datetime.datetime.now()
-              nextSeqNum = nextSeqNum + 1
-            except(KeyboardInterrupt, SystemExit):
+          if(not(recvBuffer==None) and Checksum.validate_checksum(recvBuffer)):
+            self.log("received",recvBuffer)
+            self.base = self.handleAck(recvBuffer)
+            if(self.base >= len(self.packetList)):
+              if(self.debug):
+                print("Exiting...")
               exit()
-          if((datetime.datetime.now() - a).microseconds >= 500000 or (datetime.datetime.now() - a).seconds >= 1 ):
-            print("TIMEOUT")
-            n=0
-            while((n+int(base))<nextSeqNum):
-              self.send(packetSplit[int(base)+n-1])
-              self.log("resending",packetSplit[int(base)+n])
-              n = n+1
-              a = datetime.datetime.now()
-          recvBuffer = self.receive(0.5)
-          if(recvBuffer and Checksum.validate_checksum(recvBuffer)):
-            msg_type, seqno, data, checksum = self.split_packet(recvBuffer)
-            self.log("received", recvBuffer)
-            if(int(seqno)==len(packetSplit)):
-              print("FINISHED A RUN")
-              exit()
-            base = seqno
-            if(int(base) == nextSeqNum):
-              pass
+            if(self.base == self.nextSeqNo):
+              self.timer = False
             else:
-              a = datetime.datetime.now()
-            #check if ack received is the one we expect 
-        except (KeyboardInterrupt, SystemExit):
+              self.timer = True
+              a = time.time()
+              if(not(self.nextSeqNo >= len(self.packetList))):
+                self.log("Timer started at:",self.packetList[self.nextSeqNo])
+        except(KeyboardInterrupt, SystemExit):
           exit()
-
             
-                
 
 
-
-     
- 
+      
+        
 '''
 This will be run if you run this script from the command line. You should not
 change any of this; the grader may rely on the behavior here to test your
