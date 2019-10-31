@@ -20,6 +20,9 @@ class Sender(BasicSender.BasicSender):
         self.nextSeqNo = 1
         self.packetList = None
         self.timer = True
+        self.curAck = None
+        self.fastTransmit = False
+        self.counter=0
 
     def log(self,label,msg):
       if debug:
@@ -49,6 +52,13 @@ class Sender(BasicSender.BasicSender):
         #gets received packets out of sack thing
         pass
       else:
+        if(self.curAck==int(self.split_packet(msg)[1])):
+          self.counter = self.counter + 1
+        else:
+          self.counter = 0
+        if(self.counter >= 3):
+          self.fastTransmit = True
+        self.curAck = int(self.split_packet(msg)[1])
         return int(self.split_packet(msg)[1])
 
     def startConnection(self):
@@ -72,7 +82,7 @@ class Sender(BasicSender.BasicSender):
       self.startConnection()
       while True:
         try:
-          while(self.nextSeqNo < self.base+self.window):
+          while(self.nextSeqNo < self.base+self.window and self.fastTransmit == False):
             if(self.nextSeqNo >= len(self.packetList)):
               break
             self.send(self.packetList[self.nextSeqNo])
@@ -82,7 +92,7 @@ class Sender(BasicSender.BasicSender):
               self.timer = True
               a=time.time()
             self.nextSeqNo = self.nextSeqNo + 1
-          if(time.time()-a > 0.5 and self.timer==True):
+          if(time.time()-a > 0.5 and self.timer==True or self.fastTransmit == True):
             a= time.time()
             for i in range(self.base,self.nextSeqNo):
               self.send(self.packetList[i])

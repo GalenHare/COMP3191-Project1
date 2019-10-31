@@ -1,13 +1,6 @@
 Sender.py: sent syn|0||2507698612
 Sender.py: sent syn|0||2507698612
 Sender.py: sent syn|0||2507698612
-Sender.py: sent syn|0||2507698612
-Sender.py: sent syn|0||2507698612
-Sender.py: sent syn|0||2507698612
-Sender.py: sent syn|0||2507698612
-Sender.py: sent syn|0||2507698612
-Sender.py: sent syn|0||2507698612
-Sender.py: sent syn|0||2507698612
 Sender.py: received ack|1||2195368786
 Connection established
 Sender.py: sent dat|1|CS 16|125537405
@@ -18,12 +11,6 @@ Sender.py: sent dat|3|esult|1188437164
 Sender.py: sent fin|4|at
 th|1082689064
 Sender.py: received ack|2||2851600529
-Sender.py: received ack|2||2851600529
-Sender.py: resending dat|2|DIN.
-|2906429589
-Sender.py: resending dat|3|esult|1188437164
-Sender.py: resending fin|4|at
-th|1082689064
 Sender.py: resending dat|2|DIN.
 |2906429589
 Sender.py: resending dat|3|esult|1188437164
@@ -42,104 +29,3 @@ Sender.py: resending fin|4|at
 th|1082689064
 Sender.py: received ack|5||3870715478
 Exiting...
-ng dat|4|e tes|3105984232
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:3 nextSeqNum:6 last value:(10)
-TIMEOUT
-Sender.py: resending dat|3|nder.|1350436593
-Sender.py: resending dat|4|e tes|3105984232
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:3 nextSeqNum:6 last value:(10)
-Sender.py: received ack|4||4289552151
-Relevant Variables on this run:
- base:4 nextSeqNum:6 last value:(11)
-TIMEOUT
-Sender.py: resending dat|4|e tes|3105984232
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:4 nextSeqNum:6 last value:(11)
-Sender.py: received ack|4||4289552151
-Relevant Variables on this run:
- base:4 nextSeqNum:6 last value:(11)
-Relevant Variables on this run:
- base:4 nextSeqNum:6 last value:(11)
-TIMEOUT
-Sender.py: resending dat|4|e tes|3105984232
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:4 nextSeqNum:6 last value:(11)
-TIMEOUT
-Sender.py: resending dat|4|e tes|3105984232
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:4 nextSeqNum:6 last value:(11)
-Sender.py: received ack|5||3870715478
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-Sender.py: received ack|5||3870715478
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: resending fin|5|ons
-=|2742973227
-Relevant Variables on this run:
- base:5 nextSeqNum:6 last value:(12)
-TIMEOUT
-Sender.py: 
