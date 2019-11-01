@@ -23,6 +23,7 @@ class Sender(BasicSender.BasicSender):
         self.curAck = None
         self.fastTransmit = False
         self.counter=0
+        self.ackList = []
 
     def log(self,label,msg):
       if debug:
@@ -49,8 +50,16 @@ class Sender(BasicSender.BasicSender):
 
     def handleAck(self,msg):
       if self.sackMode:
-        #gets received packets out of sack thing
-        pass
+        split = self.split_packet(msg)[1].split(";")
+        self.ackList = split[1].split(",")
+        if(self.curAck==int(split[0])):
+          self.counter = self.counter + 1
+        else:
+          self.counter = 0
+        if(self.counter >= 3):
+          self.fastTransmit = True
+        self.curAck = int(split[0])
+        return int(split[0])
       else:
         if(self.curAck==int(self.split_packet(msg)[1])):
           self.counter = self.counter + 1
@@ -95,8 +104,16 @@ class Sender(BasicSender.BasicSender):
           if(time.time()-a > 0.5 and self.timer==True or self.fastTransmit == True):
             a= time.time()
             for i in range(self.base,self.nextSeqNo):
-              self.send(self.packetList[i])
-              self.log("resending",self.packetList[i])
+              if(self.sackMode):
+                if(str(i) in self.ackList):
+                  pass
+                else:
+                  self.send(self.packetList[i])
+                  self.log("resending",self.packetList[i])  
+              else:
+                self.send(self.packetList[i])
+                self.log("resending",self.packetList[i])
+            self.fastTransmit = False
           recvBuffer = self.receive(0.5)
           if(not(recvBuffer==None) and Checksum.validate_checksum(recvBuffer)):
             self.log("received",recvBuffer)
