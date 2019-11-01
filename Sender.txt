@@ -19,34 +19,3 @@ Sender.py: received ack|3||2968308176
 Sender.py: received ack|4||4289552151
 Sender.py: received ack|6||3449503125
 Exiting...
-py: received ack|1||2195368786
-Sender.py: resending dat|1|CS 16|125537405
-Sender.py: resending dat|2|DIN.
-|2906429589
-Sender.py: resending dat|3|esult|1188437164
-Sender.py: resending fin|4|at
-th|1082689064
-Sender.py: received ack|1||2195368786
-Sender.py: received ack|1||2195368786
-Sender.py: resending dat|1|CS 16|125537405
-Sender.py: resending dat|2|DIN.
-|2906429589
-Sender.py: resending dat|3|esult|1188437164
-Sender.py: resending fin|4|at
-th|1082689064
-Sender.py: received ack|1||2195368786
-Sender.py: resending dat|1|CS 16|125537405
-Sender.py: resending dat|2|DIN.
-|2906429589
-Sender.py: resending dat|3|esult|1188437164
-Sender.py: resending fin|4|at
-th|1082689064
-Sender.py: received ack|1||2195368786
-Sender.py: resending dat|1|CS 16|125537405
-Sender.py: resending dat|2|DIN.
-|2906429589
-Sender.py: resending dat|3|esult|1188437164
-Sender.py: resending fin|4|at
-th|1082689064
-Sender.py: received ack|5||3870715478
-Exiting...

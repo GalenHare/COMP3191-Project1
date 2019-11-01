@@ -75,7 +75,7 @@ class Sender(BasicSender.BasicSender):
       while(recvBuffer==None):
         self.send(self.packetList[0])
         self.log("sent",self.packetList[0])
-        recvBuffer = self.receive(0.5)
+        recvBuffer = self.receive(0.1)
       self.log("received",recvBuffer)
       if(self.debug):
         print("Connection established")
@@ -114,7 +114,7 @@ class Sender(BasicSender.BasicSender):
                 self.send(self.packetList[i])
                 self.log("resending",self.packetList[i])
             self.fastTransmit = False
-          recvBuffer = self.receive(0.5)
+          recvBuffer = self.receive(0.1)
           if(not(recvBuffer==None) and Checksum.validate_checksum(recvBuffer)):
             self.log("received",recvBuffer)
             self.base = self.handleAck(recvBuffer)
